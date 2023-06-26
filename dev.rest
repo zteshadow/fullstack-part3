@@ -5,3 +5,5 @@ GET http://localhost:3001 HTTP/1.1
 ###
 GET http://localhost:3001/api/notes HTTP/1.1
 
+###
+GET http://localhost:3001/api/notes/10 HTTP/1.1
