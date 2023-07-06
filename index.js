@@ -95,6 +95,19 @@ app.get('/api/persons/:id', (request, response) => {
     }
 })
 
+app.delete('/api/persons/:id', (request, response) => {
+    let id = Number(request.params.id)
+    let person = persons.find(person => person.id === id)
+
+    console.log(person)
+    if (person) {
+        persons = persons.filter(person => person.id !== id)
+        response.json(person)
+    } else {
+        response.status(204).end()
+    }
+})
+
 const generateId = () => {
     const maxId = notes.length > 0 ? Math.max(...notes.map(n => n.id)) : 0
     return maxId + 1
