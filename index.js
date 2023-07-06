@@ -84,6 +84,17 @@ app.get('/info', (request, response) => {
     response.send(message)
 })
 
+app.get('/api/persons/:id', (request, response) => {
+    let id = Number(request.params.id)
+    let person = persons.find(item => item.id === id)
+    console.log(person)
+    if (person) {
+        response.json(person)
+    } else {
+        response.status(404).end()
+    }
+})
+
 const generateId = () => {
     const maxId = notes.length > 0 ? Math.max(...notes.map(n => n.id)) : 0
     return maxId + 1
