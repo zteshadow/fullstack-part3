@@ -5,7 +5,18 @@ const app = express()
 const cors = require('cors')
 app.use(cors())
 
+// middleware
+const requestLogger = (request, response, next) => {
+    console.log('Method:', request.method)
+    console.log('Path:', request.path)
+    // must used after express.json(), body will be undefined otherwise
+    console.log('Body:', request.body)
+    console.log('--')
+    next()
+}
+
 app.use(express.json())
+app.use(requestLogger)
 
 let persons = [
     { 
@@ -135,6 +146,12 @@ app.post('/api/notes', (request, response) => {
     console.log(note)
     response.json(note)
 })
+
+
+const unknowEndpoint = (request, response, next) => {
+    response.status(404).send({error: 'unknow error'})
+}
+app.use(unknowEndpoint)
 
 const PORT = process.env.PORT || 3001 // moving to Render
 app.listen(PORT, ()=> {
