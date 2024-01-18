@@ -150,10 +150,10 @@ app.post('/api/notes', (request, response) => {
 })
 
 
-const unknowEndpoint = (request, response, next) => {
-    response.status(404).send({error: 'unknow error'})
-}
-app.use(unknowEndpoint)
+// const unknowEndpoint = (request, response, next) => {
+//     response.status(404).send({error: 'unknow error'})
+// }
+// app.use(unknowEndpoint)
 
 const PORT = process.env.PORT || 3001 // moving to Render
 app.listen(PORT, ()=> {
