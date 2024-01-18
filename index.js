@@ -2,6 +2,8 @@
 const express = require('express')
 const app = express()
 
+app.use(express.static('static-page'))
+
 const cors = require('cors')
 app.use(cors())
 
