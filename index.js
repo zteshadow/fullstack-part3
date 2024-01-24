@@ -1,5 +1,30 @@
 
 const express = require('express')
+
+// database
+const mongoose = require('mongoose')
+
+if (process.argv.length < 3) {
+    console.log('give password as argument')
+    process.exit(1)
+}
+
+const password = process.argv[2]
+
+// it's the firewall that blocks the connection, wow
+const url = `mongodb+srv://samuelsongbc:${password}@fullstack.agjuzd5.mongodb.net/noteApp?retryWrites=true&w=majority`
+
+mongoose.set('strictQuery', false)
+mongoose.connect(url)
+
+const noteSchema = new mongoose.Schema({
+    content: String,
+    important: Boolean,
+})
+
+const Note = mongoose.model('Note', noteSchema)
+
+// setting up app
 const app = express()
 
 app.use(express.static('static-page'))
@@ -43,30 +68,14 @@ let persons = [
     }
 ]
 
-let notes = [
-    {
-      id: 1,
-      content: "HTML is easy",
-      important: true
-    },
-    {
-      id: 2,
-      content: "Browser can execute only JavaScript",
-      important: false
-    },
-    {
-      id: 3,
-      content: "GET and POST are the most important methods of HTTP protocol",
-      important: true
-    }
-]
-
 app.get('/', (request, response) => {
     response.send('<h1>Hello World</h1>')
 })
 
 app.get('/api/notes', (request, response) => {
-    response.json(notes)
+    Note.find({}).then(notes => {
+        response.json(notes)
+    })
 })
 
 app.get('/api/notes/:id', (request, response) => {
