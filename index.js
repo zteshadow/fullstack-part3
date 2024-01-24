@@ -50,6 +50,7 @@ app.get('/', (request, response) => {
     response.send('<h1>Hello World</h1>')
 })
 
+// Retrieve
 app.get('/api/notes', (request, response) => {
     Note.find({}).then(notes => {
         response.json(notes)
@@ -72,6 +73,7 @@ app.get('/api/notes/:id', (request, response) => {
     }
 })
 
+// Delete
 app.delete('/api/notes/:id', (request, response) => {
     const id = Number(request.params.id)
     notes = notes.filter(note => note.id !== id)
@@ -116,6 +118,7 @@ const generateId = () => {
     return maxId + 1
 }
 
+// Create
 app.post('/api/notes', (request, response) => {
     const body = request.body
 
@@ -125,17 +128,16 @@ app.post('/api/notes', (request, response) => {
         })
     }
 
-    const note = {
+    const note = new Note({
         content: body.content,
         important: body.important || false,
-        id: generateId()
-    }
+    })
 
-    notes = notes.concat(note)
-    console.log(note)
-    response.json(note)
+    note.save().then(savedNote => {
+        console.log(note)
+        response.json(note)
+    })
 })
-
 
 // const unknowEndpoint = (request, response, next) => {
 //     response.status(404).send({error: 'unknow error'})
