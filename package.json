@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:ui": "rm -rf static-page && cd ../fullstack/test && npm run build && cp -r build ../../fullstack-part3/static-page",
+    "deploy": "npm run build:ui && git add . && git commit -m \"deploy\" && git push"
   },
   "repository": {
     "type": "git",
@@ -23,7 +25,10 @@
   "homepage": "https://github.com/zteshadow/fullstack-part3#readme",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.18.2"
+    "dotenv": "^16.4.0",
+    "express": "^4.18.2",
+    "mongodb": "^6.3.0",
+    "mongoose": "^8.1.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"

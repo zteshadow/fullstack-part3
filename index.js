@@ -1,32 +1,10 @@
 
+require('dotenv').config()
 const express = require('express')
-
-// database
-const mongoose = require('mongoose')
-
-if (process.argv.length < 3) {
-    console.log('give password as argument')
-    process.exit(1)
-}
-
-const password = process.argv[2]
-
-// it's the firewall that blocks the connection, wow
-const url = `mongodb+srv://samuelsongbc:${password}@fullstack.agjuzd5.mongodb.net/noteApp?retryWrites=true&w=majority`
-
-mongoose.set('strictQuery', false)
-mongoose.connect(url)
-
-const noteSchema = new mongoose.Schema({
-    content: String,
-    important: Boolean,
-})
-
-const Note = mongoose.model('Note', noteSchema)
-
-// setting up app
 const app = express()
+const Note = require('./models/note')
 
+//
 app.use(express.static('static-page'))
 
 const cors = require('cors')

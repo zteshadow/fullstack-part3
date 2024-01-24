@@ -2,11 +2,6 @@
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
 
-if (process.argv.length < 3) {
-    console.log('give password as argument')
-    process.exit(1)
-}
-
 // it's the firewall that blocks the connection, wow
 // const url = `mongodb+srv://samuelsongbc:${password}@fullstack.agjuzd5.mongodb.net/noteApp?retryWrites=true&w=majority`
 const url = process.env.MONGODB_URI
@@ -23,7 +18,13 @@ const noteSchema = new mongoose.Schema({
     important: Boolean,
 })
 
-const Note = mongoose.model('Note', noteSchema)
+noteSchema.set('toJSON', {
+    transform: (document, returnedObject) => {
+        returnedObject.id = returnedObject._id.toString()
+        delete returnedObject._id
+        delete returnedObject.__v
+    }
+})
 
 module.exports = mongoose.model('Note', noteSchema)
 
