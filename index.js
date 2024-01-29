@@ -50,36 +50,32 @@ app.get('/', (request, response) => {
     response.send('<h1>Hello World</h1>')
 })
 
-// Retrieve
+// Notes
 app.get('/api/notes', (request, response) => {
     Note.find({}).then(notes => {
         response.json(notes)
     })
 })
 
-app.get('/api/notes/:id', (request, response) => {
-    const id = Number(request.params.id)
-    console.log(id)
-    const note = notes.find(note => {
-        console.log(note.id, typeof note.id, id, typeof id, note.id === id)
-        return note.id === id
+app.get('/api/notes/:id', (request, response, next) => {
+    Note.findById(request.params.id)
+    .then(note =>{
+        if (note) {
+            response.json(note)
+        } else {
+            response.status(404).end()
+        }
     })
-
-    console.log(note)
-    if (note) {
-        response.json(note)
-    } else {
-        response.status(404).end()
-    }
+    .catch(error => next(error))
 })
 
-// Delete
 app.delete('/api/notes/:id', (request, response) => {
     const id = Number(request.params.id)
     notes = notes.filter(note => note.id !== id)
     response.status(204).end()
 })
 
+// Phonebook
 app.get('/api/persons', (request, response) => {
     response.json(persons)
 })
@@ -139,10 +135,16 @@ app.post('/api/notes', (request, response) => {
     })
 })
 
-// const unknowEndpoint = (request, response, next) => {
-//     response.status(404).send({error: 'unknow error'})
-// }
-// app.use(unknowEndpoint)
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+
+    if (error.name === 'CastError') {
+        return response.status(400).send({error: 'malformatted id'})
+    }
+
+    next(error)
+}
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001 // moving to Render
 app.listen(PORT, ()=> {
