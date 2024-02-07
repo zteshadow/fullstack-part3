@@ -40,9 +40,14 @@ type Person {
     id: ID!
 }
 
+enum YesNo {
+    YES
+    NO
+}
+
 type Query {
     personCount: Int!
-    allPersons: [Person!]!
+    allPersons(phone: YesNo): [Person!]!
     findPerson(name: String!): Person
 }
 
@@ -53,13 +58,24 @@ type Mutation {
         street: String!
         city: String!
     ): Person
+    editNumber(
+        name: String!
+        phone: String!
+    ): Person
 }
 `
 
 const resolvers = {
     Query: {
         personCount: () => persons.length,
-        allPersons: () => persons,
+        allPersons: (root, args) => {
+          if (!args.phone) {
+            return persons
+          }
+
+          const byPhone = (person) => args.phone === 'YES' ? person.phone : !person.phone
+          return persons.filter(byPhone)
+        },
         findPerson: (root, args) => persons.find( p => p.name === args.name)
     },
     Person: {
@@ -71,6 +87,17 @@ const resolvers = {
         }
     },
     Mutation: {
+        editNumber: (root, args) => {
+            const person = persons.find(p => p.name === args.name)
+            if (!person) {
+                return null
+            }
+
+            const updatedPerson = { ...person, phone: args.phone }
+            persons = persons.map(p => p.name === args.name ? updatedPerson : p)
+            return updatedPerson
+        },
+
         addPerson: (root, args) => {
             if (persons.find(p => p.name === args.name)) {
                 throw new GraphQLError('Name must be unique'), {
